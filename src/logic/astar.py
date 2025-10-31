@@ -4,7 +4,7 @@ import math as m
 
 Node = namedtuple('Node', ['id', 'cost_from_origin', 'heuristic', 'function_cost', 'parent'])
 
-def a_star(graph, origin, destination, node_to_coords):
+def a_star(graph, origin, destination, node_to_coords, calculate_time = False):
     open_set = PriorityQueue()
     visited = set()
 
@@ -16,17 +16,25 @@ def a_star(graph, origin, destination, node_to_coords):
         _, current = open_set.get()
 
         if current.id == destination:
-            distance = str(current.cost_from_origin/1000)
-            print(distance[:distance.index('.') + 2] + "Km")
-            return build_path(current)
+            if calculate_time:
+                cost = f"{round(current.cost_from_origin / 60)} minutos"
+            else:
+                c = str(current.cost_from_origin / 1000)
+                cost = f"{c[:c.index('.') + 2] + " Km"}"
+            return build_path(current), cost
         if current in visited:
             continue
         visited.add(current.id)
 
+        if calculate_time:
+            calculate_weight = route_in_less_time
+        else:
+            calculate_weight = route_in_less_distance
+
         for neighbor in graph.neighbors(current.id):
             if neighbor in visited:
                 continue
-            g_cost = current.cost_from_origin + graph[current.id][neighbor][0]["length"]  # peso real
+            g_cost = calculate_weight(graph, current, neighbor)
             h = haversine(node_to_coords(graph, neighbor), node_to_coords(graph, destination))
             f_cost = g_cost + h
 
@@ -66,3 +74,39 @@ def build_path(node):
         path.append(node.id)
         node = node.parent
     return list(reversed(path))
+
+def route_in_less_distance(graph, current, neighbor):
+    return current.cost_from_origin + graph[current.id][neighbor][0]["length"]
+
+def route_in_less_time(graph, current, neighbor):
+            distance = graph[current.id][neighbor][0]["length"]
+            speed = get_speed(graph[current.id][neighbor][0])
+            if speed:
+                time = distance / (speed * 1000 / 3600)  # convert km/h to m/s
+            else:
+                # set mean speed if edge not specifies speed max
+                highway_type = graph[current.id][neighbor][0].get("highway", "")
+                mean_speed = {
+                    "motorway": 100,
+                    "trunk": 80,
+                    "primary": 60,
+                    "secondary": 50,
+                    "tertiary": 40,
+                    "residential": 30,
+                    "service": 20
+                }.get(highway_type, 40)
+                time = distance / (mean_speed * 1000 / 3600)
+
+
+            return current.cost_from_origin + time
+
+def get_speed(edge_data):
+    maxspeed = edge_data.get("maxspeed")
+    if maxspeed is None:
+        return None
+    if isinstance(maxspeed, list):
+        maxspeed = maxspeed[0]
+    try:
+        return float(str(maxspeed).split()[0]) #only number
+    except:
+        return None
