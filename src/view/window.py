@@ -4,12 +4,12 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import Qt
 import sys, os
-
 from src.effects.graph import addres_to_node, node_to_coords
 from src.effects.map import create_interactive_map, create_markers, create_route_in_map, outline_area
 from src.logic.astar import a_star
 from src.exceptions.validators import show_error_popup, validate_area_creation, \
     validate_route_calculation
+from src.logic.pathfinding_algorithms import path_finding, bfs, dfs
 
 app = QApplication(sys.argv)
 win = QMainWindow()
@@ -59,18 +59,18 @@ def update_map_display(container_layout, new_content):
     container_layout.addWidget(new_content)
 
 
-def create_route(origin, destination, calculate_distance):
+def create_route(origin, destination, algorithm):
     try:
-        #validate
         validate_route_calculation(place, origin, destination)
-
-        if calculate_distance:
-            route, cost = a_star(place, addres_to_node(place, origin),
-                           addres_to_node(place, destination), node_to_coords)
-        else:
-            route, cost = a_star(place, addres_to_node(place, origin),
-                           addres_to_node(place, destination), node_to_coords, True)
-
+        algorithms = {
+            "astar distance": lambda: a_star(place, addres_to_node(place, origin),
+                                             addres_to_node(place, destination), node_to_coords),
+            "astar time": lambda: a_star(place, addres_to_node(place, origin),
+                                         addres_to_node(place, destination), node_to_coords, True),
+            "bfs": lambda: (path_finding(place, origin, destination, bfs), None),
+            "dfs": lambda: (path_finding(place, origin, destination, dfs), None)
+        }
+        route, cost = algorithms[algorithm]()
         m = create_interactive_map(place)
         create_markers(origin, destination, m)
         create_route_in_map(place, m, route, cost)
@@ -78,7 +78,7 @@ def create_route(origin, destination, calculate_distance):
 
     except Exception as e:
         show_error_popup(win, e)
-        return set_interactive_map() #map without changes
+        return set_interactive_map()
 
 def window_settings(window):
     main_widget = create_UI()
@@ -114,11 +114,17 @@ def create_UI():
 
     btn_less_distance = create_button("Menor Distancia",
                                       lambda: update_map_display(map_layout,
-                                                create_route(txt_origin.text(), txt_destination.text(), calculate_distance=True)))
+                                                create_route(txt_origin.text(), txt_destination.text(),"astar distance")))
 
     btn_less_time = create_button("Menor Tiempo",
                                   lambda: update_map_display(map_layout,
-                                             create_route(txt_origin.text(), txt_destination.text(), calculate_distance=False)))
+                                             create_route(txt_origin.text(), txt_destination.text(), "astar time")))
+    btn_bfs = create_button("BFS",
+                            lambda: update_map_display(map_layout,
+                                           create_route(txt_origin.text(), txt_destination.text(),"bfs")))
+    btn_dfs = create_button("DFS",
+                            lambda: update_map_display(map_layout,
+                                           create_route(txt_origin.text(), txt_destination.text(), "dfs")))
 
     # Top panel
     pnl_top = QWidget()
@@ -137,6 +143,8 @@ def create_UI():
     layout_buttons.addWidget(btn_less_distance)
     layout_buttons.addWidget(btn_less_time)
     layout_buttons.addWidget(btn_load_area)
+    layout_buttons.addWidget(btn_bfs)
+    layout_buttons.addWidget(btn_dfs)
     layout_buttons.addStretch()
 
     layout_top.addLayout(layout_buttons, 3, 0, 1, 3)
