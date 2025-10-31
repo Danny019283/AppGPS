@@ -21,3 +21,7 @@ def addres_to_node(graph, address):
 def node_to_coords(graph, node):
     return graph.nodes[node]['y'], graph.nodes[node]['x']
 
+def address_to_coords(address):
+    lat, lon = ox.geocode(address)
+    return lon, lat
+
