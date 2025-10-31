@@ -51,18 +51,17 @@ def a_star(graph, origin, destination, node_to_coords, calculate_time = False):
     return None
 
 def haversine(origin, destination):
-    #obtenemos la latitud y longitud de los puntos deseados
+    #get lat and lon from points of interes
     lat1, lon1 = origin
     lat2, lon2 = destination
-    #pasamos a radianes
+    #to radians
     lat1,lon1 = m.radians(lat1), m.radians(lon1)
     lat2,lon2 = m.radians(lat2), m.radians(lon2)
-    #radio de la tierra en metros
+    #earth radius in meters
     earth_radius = 6371000
-    #calcular haverside a lat y lon
+    #calculate haversine for lat and lon
     hav_lat = m.sin((lat2 - lat1)/2)**2
     hav_lon = m.sin((lon2 - lon1)/2)**2
-    #se calcula la ley haverside
     return earth_radius * 2 * m.asin(m.sqrt(hav_lat + m.cos(lat1) * m.cos(lat2) * hav_lon))
 
 def heuristic(graph, origin, destination):
