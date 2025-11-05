@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QMessageBox
 import osmnx as ox
+
+from src.effects.graph import create_graph_from_osm
 from src.exceptions.gps_exceptions import *
 
 
@@ -57,7 +59,7 @@ def validate_area_creation(place_name):
         raise EmptyFieldError("Área")
 
     try:
-        place = ox.graph_from_place(place_name, network_type="drive", simplify=False)
+        place = create_graph_from_osm(place_name)
         return place
     except Exception as e:
         raise RouteCalculationError(f"No se pudo cargar el área '{place_name}': {str(e)}")

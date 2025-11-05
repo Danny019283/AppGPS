@@ -8,6 +8,8 @@ def create_graph_from_osm(selected_p):
             print("Obteniendo datos de OSM...")
             graph = ox.graph_from_place(selected_p, network_type="drive", simplify=False)
             print("Descarga completada correctamente.")
+            #numero de nodos:
+            print("Nodos: ", len(graph.nodes.items()))
             break
         except Exception as e:
             print(f"Intento {attempt+1} falló: {e}")
