@@ -13,3 +13,5 @@ if __name__ == "__main__":
 #cd "ruta\AppGPS" (según la ruta donde se haya guardado el proyecto)
 #luego activar el entorno:
 #env\Scripts\activate
+#Por último ejecutar con:
+#python app.py
