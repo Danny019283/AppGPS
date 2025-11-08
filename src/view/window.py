@@ -1,12 +1,10 @@
-import sys
 import os
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QWidget, QPushButton,
-    QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout
+    QMainWindow, QLabel, QWidget, QPushButton,
+    QLineEdit, QVBoxLayout, QHBoxLayout, QGridLayout, QMessageBox
 )
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl, Qt
-
 from src.effects.graph import addres_to_node, node_to_coords
 from src.effects.map import create_interactive_map, create_markers, create_route_in_map, outline_area
 from src.logic.astar import a_star
@@ -15,15 +13,15 @@ from src.logic.graph_representations import save_adjacency_list
 from src.logic.pathfinding_algorithms import path_finding, bfs, dfs
 
 
-class GPSApp(QMainWindow):
+class Window_app(QMainWindow):
     def __init__(self):
         super().__init__()
         self.place = None
         self.selected_place = None
 
-        self.txt_selected_place = QLineEdit()
-        self.txt_origin = QLineEdit()
-        self.txt_destination = QLineEdit()
+        self.txt_selected_place = QLineEdit("Naranjo")
+        self.txt_origin = QLineEdit("Mercado Municipal de Naranjo")
+        self.txt_destination = QLineEdit("El Rosario, Naranjo")
         self.map_container = QWidget()
         self.map_layout = QVBoxLayout()
         self.web_view = None
@@ -102,6 +100,14 @@ class GPSApp(QMainWindow):
     def create_adjacency_list(self, graph):
         if graph is not None:
             save_adjacency_list(graph)
+            self.show_message_popup("Archivo txt de lista de adyacencias creado")
+
+    def show_message_popup(self, message):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Información")
+        msg.setText(message)
+        msg.exec_()
 
     #UI
     def create_UI(self):
@@ -190,10 +196,3 @@ class GPSApp(QMainWindow):
         main_widget.setLayout(main_layout)
 
         return main_widget
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    gps_app = GPSApp()
-    gps_app.show()
-    sys.exit(app.exec_())
