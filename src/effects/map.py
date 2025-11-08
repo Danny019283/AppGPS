@@ -1,5 +1,6 @@
 import folium
 import osmnx as ox
+import os
 
 def create_interactive_map(graph):
     nodes, edges = ox.graph_to_gdfs(graph)
@@ -61,4 +62,5 @@ def outline_area(place_name,map):
             'fillOpacity': 0
         }
     ).add_to(map)
-    map.save("interactive_map.html")
+    interactive_map_file = os.path.join(os.path.join(os.path.dirname(__file__), "../../"), "interactive_map.html")
+    map.save(interactive_map_file)

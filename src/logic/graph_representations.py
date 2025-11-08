@@ -6,7 +6,7 @@ def write_to_file(file_name, line, mode = "a"):
         file.write(line + "\n")
 
 
-def save_adjacency_list(graph, file_name: str = "adjacency_list.txt"):
+def save_adjacency_list(graph, file_name):
     write_to_file(file_name, "", mode="w")
     mapping = {node: i for i, node in enumerate(graph.nodes())}
     G = nx.relabel_nodes(graph, mapping)

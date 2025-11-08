@@ -3,3 +3,4 @@ PyQtWebEngine
 osmnx
 networkx
 folium
+scikit-learn

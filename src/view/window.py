@@ -18,6 +18,9 @@ class Window_app(QMainWindow):
         super().__init__()
         self.place = None
         self.selected_place = None
+        self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+        self.interactive_map_file = os.path.join(self.project_root, "interactive_map.html")
+        self.adjacency_list_file = os.path.join(self.project_root, "adjacency_list.txt")
 
         self.txt_selected_place = QLineEdit("Naranjo")
         self.txt_origin = QLineEdit("Mercado Municipal de Naranjo")
@@ -45,15 +48,14 @@ class Window_app(QMainWindow):
         return label
 
     def set_interactive_map(self):
-        absolute_route = r"C:\Users\Danny\Documents\Trabajos UNA\Estructura de Datos\AppGPS\interactive_map.html"
-        file_route = os.path.abspath(absolute_route)
+        file_route = os.path.abspath(self.interactive_map_file)
         self.web_view = QWebEngineView()
         self.web_view.load(QUrl.fromLocalFile(file_route))
         return self.web_view
 
     def load_interactive_map(self, name_place=None, initial=False):
         try:
-            if (not os.path.exists(r"C:\Users\Danny\Documents\Trabajos UNA\Estructura de Datos\AppGPS\interactive_map.html")
+            if (not os.path.exists(self.interactive_map_file)
                     and initial):
                 return self.not_loaded_map()
             if name_place is None or name_place == "":
@@ -99,7 +101,7 @@ class Window_app(QMainWindow):
 
     def create_adjacency_list(self, graph):
         if graph is not None:
-            save_adjacency_list(graph)
+            save_adjacency_list(graph, self.adjacency_list_file)
             self.show_message_popup("Archivo txt de lista de adyacencias creado")
 
     def show_message_popup(self, message):
