@@ -1,5 +1,5 @@
-/src/view/cache/
-/src/view/interactive_map.html
-/src/view/ajyacency_lsit.txt
+/src/view/cache
+/interactive_map.html
+/adjacency_list.txt
 /cache
 /.idea
