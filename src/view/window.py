@@ -45,7 +45,7 @@ class Window_app(QMainWindow):
         return label
 
     def set_interactive_map(self):
-        absolute_route = r"C:\Users\Danny\Documents\Trabajos UNA\Estructura de Datos\AppGPS\src\view\interactive_map.html"
+        absolute_route = r"C:\Users\Danny\Documents\Trabajos UNA\Estructura de Datos\AppGPS\interactive_map.html"
         file_route = os.path.abspath(absolute_route)
         self.web_view = QWebEngineView()
         self.web_view.load(QUrl.fromLocalFile(file_route))
@@ -53,7 +53,7 @@ class Window_app(QMainWindow):
 
     def load_interactive_map(self, name_place=None, initial=False):
         try:
-            if (not os.path.exists(r"C:\Users\Danny\Documents\Trabajos UNA\Estructura de Datos\AppGPS\src\view\interactive_map.html")
+            if (not os.path.exists(r"C:\Users\Danny\Documents\Trabajos UNA\Estructura de Datos\AppGPS\interactive_map.html")
                     and initial):
                 return self.not_loaded_map()
             if name_place is None or name_place == "":

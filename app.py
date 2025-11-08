@@ -7,3 +7,9 @@ if __name__ == "__main__":
     gps_app = Window_app()
     gps_app.show()
     sys.exit(app.exec_())
+
+#Para ejecutar la aplicación se debe abrir un cmd, luego
+#ejecutar:
+#cd "ruta\AppGPS" (según la ruta donde se haya guardado el proyecto)
+#luego activar el entorno:
+#env\Scripts\activate
